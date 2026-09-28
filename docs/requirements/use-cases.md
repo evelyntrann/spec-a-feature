@@ -899,7 +899,7 @@ The course admin shall be able to cancel the use case at any time prior to submi
 
 **Preconditions:**
 - PRE-1. The instructor is logged into the system.
-- PRE-2. The instructor is assigned to the course section (BR-section-scoped-access).
+- PRE-2. The instructor is authorized to access the course section (BR-section-scoped-access, BR-role-based-access).
 
 **Postconditions:**
 - POST-1. The instructor is shown the students in the course section who have one or more applicable outstanding submissions.
@@ -928,6 +928,9 @@ The course admin shall be able to cancel the use case at any time prior to submi
 - **3b. A student submitted an applicable artifact and later deleted that submission:**
   - 3b1. Because no current submission exists for that artifact, the system treats the artifact as outstanding.
   - 3b2. The normal flow continues.
+- **3c. A student's account is deactivated:**
+  - 3c1. The system does not classify the student as an eligible non-submitter because the student cannot access the system to complete the submission (BR-student-lifecycle).
+  - 3c2. The normal flow continues with the remaining students.
 - **4a. No students have applicable outstanding submissions:**
   - 4a1. The system displays an empty result and informs the instructor that no students currently require a reminder.
   - 4a2. Use case ends.
@@ -935,7 +938,7 @@ The course admin shall be able to cancel the use case at any time prior to submi
   - 6a1. The system no longer treats that artifact as outstanding.
   - 6a2. If the student has another actionable outstanding artifact, the reminder contains only that artifact.
   - 6a3. If the student has no actionable outstanding artifacts remaining, the system skips that student and sends no reminder.
-- **6b. The submission window for an outstanding artifact has closed before the reminder is sent:**
+- **6b. An outstanding artifact has a defined submission window and that window has closed before the reminder is sent:**
   - 6b1. The system does not send a reminder for that artifact.
   - 6b2. For a peer evaluation, the system applies BR-evaluation-submission-window.
   - 6b3. If the student has no other actionable outstanding submissions, the system skips that student.
@@ -949,10 +952,15 @@ The course admin shall be able to cancel the use case at any time prior to submi
 
 **Priority:** High
 **Frequency of Use:** Weekly during course-section submission periods.
-**Business Rules:** BR-section-scoped-access, BR-role-based-access, BR-team-assignment-required, BR-active-weeks, BR-evaluation-submission-window, BR-submission-reminder-policy
+**Business Rules:** BR-section-scoped-access, BR-role-based-access, BR-team-assignment-required, BR-student-lifecycle, BR-active-weeks, BR-evaluation-submission-window, BR-submission-reminder-policy
 
 **Associated Information:**
 - An "outstanding submission" is determined separately for each applicable artifact. A student is a non-submitter for an artifact when the student is eligible and expected to submit that artifact for the applicable week or reminder period and no current submission for that student, artifact, and applicable week exists.
+- For a weekly activity report, the applicable artifact is the report for the current week when that week is one of the course section's active weeks. A WAR may still be authored outside an active week, but it is not treated as required for reminder purposes.
+- A weekly activity report is considered submitted when at least one activity exists for that student and week. Project Pulse has no separate WAR finalize action.
+- The WAR reminder period covers the current week. Project Pulse does not define a separate WAR submission-close window; the configured WAR due day/time is not treated by this use case as a prohibition on later submission.
+- For a peer evaluation, the applicable evaluated week is the previous week when that week is active, subject to BR-evaluation-submission-window.
+- A peer evaluation is considered submitted only when the student has provided the evaluations required by UC-EVA-submit-evaluation for every required team member, including herself.
 - A student who has submitted every applicable artifact is not a non-submitter.
 - A student may have one applicable artifact submitted and another outstanding; the system identifies only the outstanding artifact.
 - Only submissions whose completion can still be acted upon are eligible for a reminder.
