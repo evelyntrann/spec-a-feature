@@ -887,6 +887,81 @@ The course admin shall be able to cancel the use case at any time prior to submi
 **Assumptions:**
 **Open Issues:**
 
+### **UC-SEC-remind-non-submitters: The instructor reminds students with outstanding submissions**
+
+**UC ID and Name:** UC-SEC-remind-non-submitters: Remind students with outstanding submissions
+**Created By:** Evelyn Tran
+**Date Created:** 28/Sep/26
+**Primary Actor:** instructor
+**Secondary Actors:**
+**Trigger:** The instructor indicates to view students with outstanding submissions for a course section.
+**Description:** The instructor wants to identify students in a course section who have not completed one or more applicable submissions and send reminders to selected students while those submissions can still be completed.
+
+**Preconditions:**
+- PRE-1. The instructor is logged into the system.
+- PRE-2. The instructor is assigned to the course section (BR-section-scoped-access).
+
+**Postconditions:**
+- POST-1. The instructor is shown the students in the course section who have one or more applicable outstanding submissions.
+- POST-2. A reminder is sent to each selected eligible student who still has at least one actionable outstanding submission at the time the reminder is sent.
+- POST-3. No reminder is sent to a student who has completed all applicable submissions, is not eligible to submit them, or whose applicable submission window has closed.
+
+**Main Success Scenario:**
+1. The instructor indicates to view students with outstanding submissions for a course section.
+2. The system determines the submissions applicable to the current reminder period for that course section.
+3. The system identifies students in the course section who are eligible to submit and who have no current submission for one or more applicable submission artifacts.
+4. The system displays each identified student and the artifact or artifacts currently outstanding.
+5. The instructor selects one or more students and indicates to send reminders.
+6. The system rechecks each selected student's current submission status and reminder eligibility.
+7. The system removes from the reminder any artifact that is no longer outstanding or is no longer actionable.
+8. The system sends one reminder to each remaining eligible student, identifying all of that student's currently actionable outstanding submissions.
+9. The system informs the instructor which reminders were sent, skipped, or could not be delivered.
+10. Use case ends.
+
+**Extensions:**
+- **2a. A peer evaluation does not correspond to an active evaluated week:**
+  - 2a1. The system does not treat that peer evaluation as an applicable submission (BR-active-weeks).
+  - 2a2. The normal flow continues with the remaining applicable submissions.
+- **3a. A student is not assigned to a team:**
+  - 3a1. The system does not classify the student as a non-submitter for a weekly activity report or peer evaluation because the student is not eligible to author either artifact (BR-team-assignment-required).
+  - 3a2. The normal flow continues with the remaining students.
+- **3b. A student submitted an applicable artifact and later deleted that submission:**
+  - 3b1. Because no current submission exists for that artifact, the system treats the artifact as outstanding.
+  - 3b2. The normal flow continues.
+- **4a. No students have applicable outstanding submissions:**
+  - 4a1. The system displays an empty result and informs the instructor that no students currently require a reminder.
+  - 4a2. Use case ends.
+- **6a. A selected student submitted an artifact after the list was displayed:**
+  - 6a1. The system no longer treats that artifact as outstanding.
+  - 6a2. If the student has another actionable outstanding artifact, the reminder contains only that artifact.
+  - 6a3. If the student has no actionable outstanding artifacts remaining, the system skips that student and sends no reminder.
+- **6b. The submission window for an outstanding artifact has closed before the reminder is sent:**
+  - 6b1. The system does not send a reminder for that artifact.
+  - 6b2. For a peer evaluation, the system applies BR-evaluation-submission-window.
+  - 6b3. If the student has no other actionable outstanding submissions, the system skips that student.
+- **8a. A manual reminder has already been sent to the same student during the restricted reminder period:**
+  - 8a1. The system does not send another manual reminder (BR-submission-reminder-policy).
+  - 8a2. The system informs the instructor that the reminder was skipped.
+- **8b. The mail server rejects a student's email address or reminder delivery otherwise fails:**
+  - 8b1. The system records the failed delivery.
+  - 8b2. The system continues sending reminders to the remaining selected students.
+  - 8b3. The failed reminder is included in the result shown to the instructor.
+
+**Priority:** High
+**Frequency of Use:** Weekly during course-section submission periods.
+**Business Rules:** BR-section-scoped-access, BR-role-based-access, BR-team-assignment-required, BR-active-weeks, BR-evaluation-submission-window, BR-submission-reminder-policy
+
+**Associated Information:**
+- An "outstanding submission" is determined separately for each applicable artifact. A student is a non-submitter for an artifact when the student is eligible and expected to submit that artifact for the applicable week or reminder period and no current submission for that student, artifact, and applicable week exists.
+- A student who has submitted every applicable artifact is not a non-submitter.
+- A student may have one applicable artifact submitted and another outstanding; the system identifies only the outstanding artifact.
+- Only submissions whose completion can still be acted upon are eligible for a reminder.
+- Submission status is section-scoped student information and must not be disclosed outside the instructor's authorized course section.
+
+**Related Use Cases:** UC-WAR-manage-activities: Manage activities in a weekly activity report; UC-EVA-submit-evaluation: Submit a peer evaluation for the previous week; UC-EVA-section-evaluation-report: Generate a peer evaluation report of the entire course section.
+**Assumptions:**
+**Open Issues:**
+
 ## **Team**
 
 ### **UC-TEA-find-teams: The course admin/instructor finds teams**
